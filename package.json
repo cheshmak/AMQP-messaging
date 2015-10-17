@@ -1,0 +1,13 @@
+{
+  "name": "ches-messaging",
+  "version": "0.0.18",
+  "description": "RabbitMQ messaging",
+  "main": "index.js",
+  "scripts": {
+    "test": ""
+  },
+  "author": "Mehran Khajavi <khajavi@vilap.com>",
+  "dependencies":{
+    "rabbit.js": "0.4.4"
+  }
+}
