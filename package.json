@@ -1,6 +1,6 @@
 {
   "name": "ches-messaging",
-  "version": "0.0.18",
+  "version": "0.9.0",
   "description": "RabbitMQ messaging",
   "main": "index.js",
   "scripts": {
