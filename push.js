@@ -17,7 +17,12 @@ var provider = function (routeName, context) {
  * @data: json object
  */
 provider.prototype.sendPush = function (data) {
-  this.socket.write(JSON.stringify(data));
+  try{
+    this.socket.write(JSON.stringify(data));
+    return Q.resolve(provider);
+  } catch(err){
+    return Q.reject(err);
+  }
 };
 
 
