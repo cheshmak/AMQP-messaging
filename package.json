@@ -6,7 +6,7 @@
   "scripts": {
     "test": ""
   },
-  "author": "Mehran Khajavi <khajavi@vilap.com>",
+  "author": "Mehran Khajavi <khajavi@cheshmak.me>",
   "dependencies":{
     "rabbit.js": "0.4.4"
   }
