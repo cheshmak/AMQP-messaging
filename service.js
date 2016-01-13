@@ -49,7 +49,7 @@ service.prototype.isConnectionAvailable = function () {
  * @routeName: route name
  * @workerFunction{PROMISE}: function: parameters: JSON parsed received, returns promise
  * @prefetchCount: how many rabbitmq messages will be sent to this worker before ack called? default is 1
- * 
+ *
  */
 service.prototype.addWorker = function (routeName, workerFunction, prefetchCount) {
   return Q(connection.createChannel().then(function (ch) {
@@ -73,7 +73,7 @@ service.prototype.addWorker = function (routeName, workerFunction, prefetchCount
           workerFunction(parsed)
             .done(function () {
               //send ack
-              logger.trace('messaging:worker done for ' + routeName);
+              // logger.trace('messaging:worker done for ' + routeName);
               try {
                 ch.ack(data);
               } catch (e) {
