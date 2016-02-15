@@ -70,16 +70,24 @@ service.prototype.addWorker = function (routeName, workerFunction, prefetchCount
           });
         }
         if (parsed) {
-          workerFunction(parsed)
-            .done(function () {
-              //send ack
-              // logger.trace('messaging:worker done for ' + routeName);
-              try {
-                ch.ack(data);
-              } catch (e) {
-                console.log(e);
-              }
+          Q.fcall(function () {
+            return workerFunction(parsed);
+          }).catch(function (err) {
+            logger.log('error', 'error in service ', {
+              routeName: routeName,
+              incommingData: data.content.toString(),
+              error: err
             });
+            return true;
+          }).done(function () {
+            //send ack
+            // logger.trace('messaging:worker done for ' + routeName);
+            try {
+              ch.ack(data);
+            } catch (e) {
+              console.log(e);
+            }
+          });
         } else {
           ch.ack(data); //don't call workerFunction  but call ack for next incomming data
         }
