@@ -1,5 +1,6 @@
 'use strict';
-var Q = require('q'),
+var devMode = (process.env.NODE_ENV !== 'production'),
+  Q = require('q'),
   amqplib = require('amqplib'),
   _ = require('lodash'),
   pushProvider = require('./push'),
@@ -23,7 +24,7 @@ var service = function () {
 };
 
 service.prototype.connect = function () {
-  return Q(amqplib.connect('amqp://localhost'))
+  return Q(amqplib.connect('amqp://' + (devMode ? 'localhost' : process.env.AMQP_SERVER_ADDRESS)))
     .then(function (con) {
       connection = con;
       return connection;
