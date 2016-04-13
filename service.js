@@ -5,11 +5,11 @@ var devMode = (process.env.NODE_ENV !== 'production'),
   _ = require('lodash'),
   pushProvider = require('./push'),
   logger = require('ches-logger'),
-  errors = require('common-errors');
+  Exception = require('ches-exception');
 
 if (!devMode) {
   if (_(process.env.AMQP_SERVER_ADDRESS).isNil()) {
-    throw new errors.ArgumentNullError('AMQP_SERVER_ADDRESS');
+    throw new Exception('NOT_FOUND', new Error('AMQP_SERVER_ADDRESS'));
   }
 }
 

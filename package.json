@@ -8,8 +8,6 @@
   },
   "author": "Mehran Khajavi <khajavi@cheshmak.me>",
   "dependencies": {
-    "amqplib": "0.4.0",
-    "common-errors": "^0.5.3",
-    "lodash": "^4.10.0"
+    "amqplib": "0.4.0"
   }
 }
