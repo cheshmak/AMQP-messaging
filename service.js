@@ -4,7 +4,15 @@ var devMode = (process.env.NODE_ENV !== 'production'),
   amqplib = require('amqplib'),
   _ = require('lodash'),
   pushProvider = require('./push'),
-  logger = require('ches-logger');
+  logger = require('ches-logger'),
+  errors = require('common-errors');
+
+if (!devMode) {
+  if (_(process.env.AMQP_SERVER_ADDRESS).isNil()) {
+    throw new errors.ArgumentNullError('AMQP_SERVER_ADDRESS');
+  }
+}
+
 //the connection variable is used locally and used many times
 //it is set in service function if existing connection not available
 var connection;
