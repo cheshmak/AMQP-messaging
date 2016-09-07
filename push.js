@@ -1,6 +1,6 @@
 'use strict';
-var Q = require('q'),
-  logger = require('ches-logger');
+var Q = require('q');
+
 var provider = function (routeName, connection) {
   var scope = this;
   this.routeName = routeName;
@@ -24,7 +24,7 @@ provider.prototype.sendPush = function (data) {
     this.channel.sendToQueue(this.routeName, new Buffer(JSON.stringify(data)));
     return Q.resolve(provider);
   } catch (err) {
-    logger.error('cant send to queue in messaging queue', err);
+    console.log('cant send to queue in messaging queue', err);
     return Q.reject(err);
   }
 };

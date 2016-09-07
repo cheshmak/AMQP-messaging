@@ -4,7 +4,6 @@ var devMode = (process.env.NODE_ENV !== 'production'),
   amqplib = require('amqplib'),
   _ = require('lodash'),
   pushProvider = require('./push'),
-  logger = require('ches-logger'),
   Exception = require('ches-exception');
 
 if (!devMode) {
@@ -38,7 +37,7 @@ service.prototype.connect = function () {
       return connection;
     })
     .catch(function (err) {
-      logger.error('cant connect to rabbitmq', err);
+      console.log('cant connect to rabbitmq', err);
       return Q.reject(err);
     });
 };
@@ -72,7 +71,7 @@ service.prototype.addWorker = function (routeName, workerFunction, prefetchCount
         try {
           parsed = JSON.parse(data.content.toString());
         } catch (e) {
-          logger.error('messaging:error parsing input queue', {
+          console.log('messaging:error parsing input queue', {
             routeName: routeName,
             error: e,
             incomingdata: data
@@ -82,7 +81,7 @@ service.prototype.addWorker = function (routeName, workerFunction, prefetchCount
           Q.fcall(function () {
             return workerFunction(parsed);
           }).catch(function (err) {
-            logger.log('error', 'error in service ', {
+            console.log('error', 'error in service ', {
               routeName: routeName,
               incommingData: data.content.toString(),
               error: err
@@ -90,7 +89,7 @@ service.prototype.addWorker = function (routeName, workerFunction, prefetchCount
             return true;
           }).done(function () {
             //send ack
-            // logger.trace('messaging:worker done for ' + routeName);
+            // console.log('messaging:worker done for ' + routeName);
             try {
               ch.ack(data);
             } catch (e) {
@@ -103,7 +102,7 @@ service.prototype.addWorker = function (routeName, workerFunction, prefetchCount
       }, {
         noAck: false
       });
-      logger.trace('messaging:worker for queue :' + routeName + ' added, waiting for incoming queue');
+      console.log('messaging:worker for queue :' + routeName + ' added, waiting for incoming queue');
     });
   }));
 };
