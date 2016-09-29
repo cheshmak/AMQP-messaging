@@ -56,48 +56,63 @@ service.prototype.isConnectionAvailable = function () {
  * when a route comes for @routeName it calls @workerFunction
  * @routeName: route name
  * @workerFunction{PROMISE}: function: parameters: JSON parsed received, returns promise
- * @prefetchCount: how many rabbitmq messages will be sent to this worker before ack called? default is 1
+ * @options:{
+ *    prefetchCount:how many rabbitmq messages will be sent to this worker before ack called? default is 1
+ * }
  *
  */
-service.prototype.addWorker = function (routeName, workerFunction, prefetchCount) {
+service.prototype.addWorker = function (routeName, workerFunction, options) {
   return Q(connection.createChannel().then(function (ch) {
     return ch.assertQueue(routeName, {
       durable: true
     }).then(function () {
-      ch.prefetch(prefetchCount || 1);
+      ch.prefetch(_.get(options, 'prefetchCount', 1));
     }).then(function () {
-      ch.consume(routeName, function (data) {
+      ch.consume(routeName, function (msg) {
         var parsed;
         try {
-          parsed = JSON.parse(data.content.toString());
+          parsed = JSON.parse(msg.content.toString());
         } catch (e) {
           console.log('messaging:error parsing input queue', {
             routeName: routeName,
             error: e,
-            incomingdata: data
+            incomingmsg: msg
           });
         }
         if (parsed) {
           Q.fcall(function () {
-            return workerFunction(parsed);
-          }).catch(function (err) {
-            console.log('error', 'error in service ', {
-              routeName: routeName,
-              incommingData: data.content.toString(),
-              error: err
+              return workerFunction(parsed);
+            })
+            .then((result) => {
+              //check if this is an RPC call
+              var replyTo = _.get(msg, 'properties.replyTo', false);
+              if (replyTo) {
+                return Q(ch.sendToQueue(
+                  replyTo,
+                  new Buffer(JSON.stringify(result)), {
+                    correlationId: msg.properties.correlationId
+                  }
+                ));
+              }
+              return Q.resolve();
+            }).catch(function (err) {
+              console.log('error', 'error in service ', {
+                routeName: routeName,
+                incommingData: msg.content.toString(),
+                error: err
+              });
+              return true;
+            }).done(function () {
+              //send ack
+              // console.log('messaging:worker done for ' + routeName);
+              try {
+                ch.ack(msg);
+              } catch (e) {
+                console.log(e);
+              }
             });
-            return true;
-          }).done(function () {
-            //send ack
-            // console.log('messaging:worker done for ' + routeName);
-            try {
-              ch.ack(data);
-            } catch (e) {
-              console.log(e);
-            }
-          });
         } else {
-          ch.ack(data); //don't call workerFunction  but call ack for next incomming data
+          ch.ack(msg); //don't call workerFunction  but call ack for next incomming data
         }
       }, {
         noAck: false
