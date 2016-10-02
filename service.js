@@ -80,29 +80,37 @@ service.prototype.addWorker = function (routeName, workerFunction, options) {
           });
         }
         if (parsed) {
+          var replyTo = _.get(msg, 'properties.replyTo', false),
+            response;
           Q.fcall(function () {
               return workerFunction(parsed);
             })
             .then((result) => {
               //check if this is an RPC call
-              var replyTo = _.get(msg, 'properties.replyTo', false);
-              if (replyTo) {
-                return Q(ch.sendToQueue(
-                  replyTo,
-                  new Buffer(JSON.stringify(result)), {
-                    correlationId: msg.properties.correlationId
-                  }
-                ));
-              }
-              return Q.resolve();
+              response = {
+                result: result,
+                success: true
+              };
             }).catch(function (err) {
               console.log('error', 'error in service ', {
                 routeName: routeName,
                 incommingData: msg.content.toString(),
                 error: err
               });
+              response = {
+                success: false,
+                error: err + ''
+              };
               return true;
             }).done(function () {
+              if (replyTo) {
+                Q(ch.sendToQueue(
+                  replyTo,
+                  new Buffer(JSON.stringify(response)), {
+                    correlationId: msg.properties.correlationId
+                  }
+                ));
+              }
               //send ack
               // console.log('messaging:worker done for ' + routeName);
               try {

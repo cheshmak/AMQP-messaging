@@ -37,7 +37,10 @@ function generateUuid() {
       Math.random().toString();
   }
   /**
-   * @reterns promise of result
+   * @reterns promise of {
+   *   success:true/false if worker truly called
+   *   result: anything returned from worker
+   * }
    */
 Push.prototype.rpcCall = function (data) {
   var deferred = Q.defer();
