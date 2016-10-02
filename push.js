@@ -67,7 +67,11 @@ Push.prototype.rpcCall = function (data) {
                 incomingmsg: msg
               });
             }
-            deferred.resolve(parsed);
+            if (_.get(parsed, 'success')) {
+              deferred.resolve(_.get(parsed, 'result'));
+            } else {
+              deferred.reject(_.get(parsed, 'error'));
+            }
           } else {
             vm.channel.nack(msg);
           }
