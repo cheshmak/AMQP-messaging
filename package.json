@@ -8,7 +8,7 @@
   },
   "author": "Mehran Khajavi <khajavi@cheshmak.me>",
   "dependencies": {
-    "ches-exception": "git+ssh://git@bitbucket.cheshmak.me:7999/ches-lib/exception.git#1.x",
+    "ches-exception": "git+ssh://git@bitbucket.cheshmak.me:7999/ches-lib/exception.git#v1.x",
     "amqplib": "^0.4.0",
     "lodash": "^3.10.1",
     "q": "^1.4.1"
