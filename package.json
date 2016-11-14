@@ -10,7 +10,7 @@
   "dependencies": {
     "ches-exception": "git+ssh://git@bitbucket.cheshmak.me:7999/ches-lib/exception.git#v1.x",
     "amqplib": "^0.4.0",
-    "lodash": "^3.10.1",
+    "lodash": "4.16.6",
     "q": "^1.4.1"
   }
 }
