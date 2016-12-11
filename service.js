@@ -147,12 +147,14 @@ var pushProviders = {};
  * @returns: promise of push provider: resolves: pushProvider
  */
 service.prototype.getPushProvider = function (routeName) {
-  if (_.has(pushProviders, routeName)) {
-    return _.get(pushProviders, routeName);
-  }
-  var push = new pushProvider(routeName, connection);
-  _.set(pushProviders, routeName, push);
-  return push;
+  /*  if (_.has(pushProviders, routeName)) {
+      return _.get(pushProviders, routeName);
+    }
+    var push = new pushProvider(routeName, connection);
+    _.set(pushProviders, routeName, push);
+   return push;*/
+  //Due to amqp-connection-manager bug we create it each time, but it SHOULD be fixed
+  return new pushProvider(routeName, connection);
 };
 
 module.exports = service;
