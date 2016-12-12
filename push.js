@@ -17,7 +17,7 @@ function Push(routeName, connection) {
     }
   });
   vm.channelWrapper = channelWrapper;
-  vm.responseTimeout = 5000; //any timeout limit, IMPORTANT: if you want to change it you should update queues properties in rabbitmq or delete the queues!
+  vm.responseTimeout = 60000; //any timeout limit, IMPORTANT: if you want to change it you should update queues properties in rabbitmq or delete the queues!
   return Q.resolve(vm);
 }
 
@@ -32,9 +32,6 @@ Push.prototype.sendPush = function (data) {
     Q(channelWrapper.sendToQueue(vm.routeName, new Buffer(JSON.stringify(data))))
       .catch((err) => {
         console.error('error send messaging', err);
-      })
-      .done(() => {
-        console.log('4434343');
       });
   } catch (err) {
     console.log('cant send to queue in messaging queue', err);
