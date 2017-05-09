@@ -4,11 +4,8 @@ var push = require('./push'),
   _ = require('lodash');
 
 /**
- * you can set what data to return. type: key value
- * example:
- * {
- *  'routeName':{object}
- * }
+ * @param dataToReturn : {routeName:{}}
+ * @returns {service}
  */
 module.exports = dataToReturn => {
   var service = function () {
