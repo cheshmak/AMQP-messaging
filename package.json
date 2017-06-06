@@ -9,10 +9,10 @@
   "author": "Mehran Khajavi <khajavi@cheshmak.me>",
   "dependencies": {
     "amqp-connection-manager": "1.3.5",
-    "amqplib": "^0.4.0",
+    "amqplib": "0.4.0",
     "async": "2.4.1",
     "ches-exception": "git+ssh://git@bitbucket.cheshmak.me:7999/ches-lib/exception.git#v1.x",
     "lodash": "4.16.6",
-    "q": "^1.4.1"
+    "q": "1.5.0"
   }
 }
