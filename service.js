@@ -48,7 +48,16 @@ service.prototype.isConnectionAvailable = function () {
   return false;
 };
 
-
+service.prototype.stopSendingMsgTo = function(routeName) {
+  const channelWrapper = connection.createChannel({
+    setup: function (channel) {
+      return channel.assertQueue(routeName, {
+        durable: true
+      });
+    }
+  });
+  return channelWrapper.cancel(routeName);
+};
 
 /**
  * it adds a worker to queue
@@ -137,7 +146,7 @@ service.prototype.addWorker = function (routeName, workerFunction, options) {
     }).then(function () {
       ch.prefetch(_.get(options, 'prefetchCount', 1));
     }).then(function () {
-      
+
     });
   }));*/
 };
