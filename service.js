@@ -48,17 +48,6 @@ service.prototype.isConnectionAvailable = function () {
   return false;
 };
 
-service.prototype.stopSendingMsgTo = function(routeName) {
-  const channelWrapper = connection.createChannel({
-    setup: function (channel) {
-      return channel.assertQueue(routeName, {
-        durable: true
-      });
-    }
-  });
-  return channelWrapper.cancel(routeName);
-};
-
 /**
  * it adds a worker to queue
  * when a route comes for @routeName it calls @workerFunction
@@ -70,15 +59,18 @@ service.prototype.stopSendingMsgTo = function(routeName) {
  *
  */
 service.prototype.addWorker = function (routeName, workerFunction, options) {
+  const defer = Q.defer();
 
-  var channelWrapper = connection.createChannel({
+  const channelWrapper = connection.createChannel({
     setup: function (channel) {
       return channel.assertQueue(routeName, {
         durable: true
       });
     }
   });
+
   channelWrapper.addSetup((ch) => {
+    defer.resolve(ch);
     ch.prefetch(_.get(options, 'prefetchCount', 1));
     ch.consume(routeName, function (msg) {
       var parsed;
@@ -139,6 +131,7 @@ service.prototype.addWorker = function (routeName, workerFunction, options) {
     });
     console.log('messaging:worker for queue :' + routeName + ' added, waiting for incoming queue');
   });
+  return defer.promise;
   /*
   return Q(connection.createChannel().then(function (ch) {
     return ch.assertQueue(routeName, {
@@ -149,6 +142,7 @@ service.prototype.addWorker = function (routeName, workerFunction, options) {
 
     });
   }));*/
+
 };
 
 var pushProviders = {};
