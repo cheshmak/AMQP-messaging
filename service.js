@@ -1,6 +1,7 @@
 'use strict';
 var devMode = (process.env.NODE_ENV !== 'production'),
   Q = require('q'),
+  async = require('async'),
   amqplib = require('amqp-connection-manager'),
   _ = require('lodash'),
   pushProvider = require('./push'),
@@ -30,6 +31,8 @@ var service = function () {
   return Q.resolve(this);
 };
 
+service.prototype.channels = {};
+
 service.prototype.connect = function () {
   connection = amqplib.connect('amqp://' + (devMode ? 'localhost' : process.env.AMQP_SERVER_ADDRESS));
   connection.on('disconnect', () => {
@@ -48,7 +51,21 @@ service.prototype.isConnectionAvailable = function () {
   return false;
 };
 
+service.prototype._addChannel = function (routeName, channel) {
+  const self = this;
+  if (!_.has(self.channels, routeName) || !_.isArray(self.channels[routeName])) {
+    self.channels[routeName] = [];
+  }
+  self.channels[routeName].push(channel);
+};
 
+service.prototype._getChannels = function (routeName) {
+  const self = this;
+  if (!_.has(self.channels, routeName) || !_.isArray(self.channels[routeName])) {
+    return [];
+  }
+  return self.channels[routeName];
+};
 
 /**
  * it adds a worker to queue
@@ -61,15 +78,18 @@ service.prototype.isConnectionAvailable = function () {
  *
  */
 service.prototype.addWorker = function (routeName, workerFunction, options) {
+  const self = this;
 
-  var channelWrapper = connection.createChannel({
+  const channelWrapper = connection.createChannel({
     setup: function (channel) {
       return channel.assertQueue(routeName, {
         durable: true
       });
     }
   });
+
   channelWrapper.addSetup((ch) => {
+    self._addChannel(routeName, ch);
     ch.prefetch(_.get(options, 'prefetchCount', 1));
     ch.consume(routeName, function (msg) {
       var parsed;
@@ -128,7 +148,7 @@ service.prototype.addWorker = function (routeName, workerFunction, options) {
     }, {
       noAck: false
     });
-    console.log('messaging:worker for queue :' + routeName + ' added, waiting for incoming queue');
+    console.log(`messaging:worker for queue: ${routeName} added, waiting for incoming queue`);
   });
   /*
   return Q(connection.createChannel().then(function (ch) {
@@ -137,9 +157,40 @@ service.prototype.addWorker = function (routeName, workerFunction, options) {
     }).then(function () {
       ch.prefetch(_.get(options, 'prefetchCount', 1));
     }).then(function () {
-      
+
     });
   }));*/
+
+};
+
+service.prototype.cancelWorker = function (routeName) {
+  const self = this;
+  const defer = Q.defer();
+  const channels = self._getChannels(routeName);
+  const cancelConsumers = (ch, callback) => {
+    let consumerTags = _.keys(ch.consumers);
+    if (_.size(consumerTags) > 0) {
+      Q.all(_.map(consumerTags, ct => ch.cancel(ct)))
+        .then((res) => {
+          callback(null, res);
+        })
+        .catch((err) => {
+          callback(err, null);
+        });
+    }
+  };
+  async.parallel(_.map(channels, ch => callback => {
+    cancelConsumers(ch, callback);
+  }), (err, res) => {
+    if (err) {
+      console.log(`messaging:worker for queue: ${routeName} can not canceled by error.`);
+      defer.reject(err);
+    } else {
+      console.log(`messaging:worker for queue: ${routeName} canceled.`);
+      defer.resolve(res);
+    }
+  });
+  return defer.promise;
 };
 
 var pushProviders = {};
