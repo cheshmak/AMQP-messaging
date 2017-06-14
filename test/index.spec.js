@@ -127,9 +127,7 @@ describe('messaging/endtoendtest', function () {
     return Q.fcall(() => {
       return new service();
     }).then(serve => {
-      return serve.getPushProvider(queueName, {
-        responseTimeout: 100
-      });
+      return serve.getPushProvider(queueName);
     }).then((pushSender) => {
       return pushSender.rpcCall({
         hi: 'true'
