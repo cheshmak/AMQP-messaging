@@ -2,9 +2,10 @@
   "name": "ches-messaging",
   "version": "1.1.2",
   "description": "RabbitMQ messaging",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
-    "test": ""
+    "test": "NODE_ENV='test' node_modules/nyc/bin/nyc.js node_modules/mocha/bin/mocha test/**/*.spec.js",
+    "test-report": "NODE_ENV='test' node_modules/nyc/bin/nyc.js report -r html node_modules/mocha/bin/mocha test/**/*.spec.js && xdg-open ./coverage/index.html >/dev/null 2>&1 & open ./coverage/index.html"
   },
   "author": "Mehran Khajavi <khajavi@cheshmak.me>",
   "dependencies": {
@@ -14,5 +15,11 @@
     "ches-exception": "git+ssh://git@bitbucket.cheshmak.me:7999/ches-lib/exception.git#v1.x",
     "lodash": "4.16.6",
     "q": "1.5.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.3.0",
+    "nyc": "^10.3.0",
+    "node-cmd": "3.0.0"
   }
 }
