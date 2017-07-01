@@ -1,8 +1,13 @@
 'use strict';
-const service = require('../lib').service,
+const
+  service = require('../lib').service,
+  topic = require('../lib/Topic'),
   Q = require('q'),
   assert = require('chai').assert,
+  expect = require('chai').expect,
   cmd = require('node-cmd');
+
+const ex1 = 'exchangetest1';
 
 describe('messaging/endtoendtest', function () {
   beforeEach((done) => {
@@ -12,24 +17,28 @@ describe('messaging/endtoendtest', function () {
       cmd.run('rabbitmqadmin delete queue name=messagingtest3');
       cmd.run('rabbitmqadmin delete queue name=messagingtest4');
       cmd.run('rabbitmqadmin delete queue name=messagingtest5');
+
+      cmd.run(`rabbitmqadmin delete exchange name=${ex1}`);
     }).then(() => {
       setTimeout(() => {
         done();
       }, 200);
-
     });
   });
+
   it('should send to worker', () => {
-    let deferred = Q.defer(),
+    const deferred = Q.defer(),
       queueName = 'messagingtest1';
+
     new service().then(function (serviceQueue) {
       serviceQueue.addWorker(queueName, (data) => {
         assert.equal(data.hi, 'true');
         deferred.resolve();
-        serviceQueue.cancelWorker(queueName) //prevent this for handling next
+        serviceQueue.cancelWorker(queueName) // prevent this for handling next
           .then(() => {
             deferred.resolve();
           });
+
         return Q.resolve();
       });
     });
@@ -39,17 +48,45 @@ describe('messaging/endtoendtest', function () {
       return pushSender.sendPush({
         hi: 'true'
       });
-    }).catch(err => {
+    }).catch((err) => {
       deferred.reject(err);
     });
+
     return deferred.promise;
   });
+
+  it('Should publish and subscribe correctly', () => {
+  /*
+    const defer = Q.defer(),
+      sampleMsg = {
+        name: 'test content'
+      };
+
+    topic.subscribe(ex1, (res) => {
+      expect(res).to.be.deep.equal(sampleMsg);
+      defer.resolve();
+    });
+
+    topic.publish(ex1, sampleMsg)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        defer.reject(err);
+      });
+
+    return defer.promise;
+  */
+  })
   it('should work find with rpc', () => {
-    let queueName = 'messagingtest2';
-    let mybuffer = new Buffer.from('ohh yeah');
+    const queueName = 'messagingtest2';
+
+    const mybuffer = new Buffer('ohh yeah');
+
     new service().then(function (serviceQueue) {
       serviceQueue.addWorker(queueName, (data) => {
         assert.equal(data.hi, 'true');
+
         return Q.resolve({
           myinfo: 'yeah',
           extra: {
@@ -58,25 +95,27 @@ describe('messaging/endtoendtest', function () {
         });
       });
     });
+
     return new service().then((serve) => {
       return serve.getPushProvider(queueName);
     }).then((pushSender) => {
       return pushSender.rpcCall({
         hi: 'true'
       });
-    }).then(result => {
+    }).then((result) => {
       assert.deepEqual(result.myinfo, 'yeah');
       assert.deepEqual(result.extra.mydata, mybuffer);
     });
   });
 
   it('should stop messages when calling cancel', () => {
-    let deferred = Q.defer(),
-      queueName = 'messagingtest3',
-      serviceQ,
+    const deferred = Q.defer(),
+      queueName = 'messagingtest3';
+    let serviceQ,
       sender,
       hiProcessed = Q.defer(),
       cancelProcessed = false;
+
     Q.fcall(() => {
 
       }).then(() => {
@@ -84,6 +123,7 @@ describe('messaging/endtoendtest', function () {
       })
       .then(function (serviceQueue) {
         serviceQ = serviceQueue;
+
         return serviceQueue.addWorker(queueName, (data) => {
           if (data.hi === 'true') {
             hiProcessed.resolve();
@@ -91,6 +131,7 @@ describe('messaging/endtoendtest', function () {
             cancelProcessed = true;
           }
           hiProcessed = true;
+
           return Q.resolve();
         });
       }).then(() => {
@@ -100,6 +141,7 @@ describe('messaging/endtoendtest', function () {
         return serve.getPushProvider(queueName);
       }).then((pushSender) => {
         sender = pushSender;
+
         return pushSender.sendPush({
           hi: 'true'
         });
@@ -108,7 +150,6 @@ describe('messaging/endtoendtest', function () {
       }).then(() => {
         return serviceQ.cancelWorker(queueName);
       }).then(() => {
-
         setTimeout(() => {
           sender.sendPush({
             hi: 'ERROR'
@@ -122,22 +163,23 @@ describe('messaging/endtoendtest', function () {
           }, 200);
         }, 200);
       });
+
     return deferred.promise;
   });
 
-
   it('should reject with timeout when timeout reached in rpc', () => {
-    let queueName = 'messagingtest4',
-      isRejected = false;
+    const queueName = 'messagingtest4';
+    let isRejected = false;
+
     return Q.fcall(() => {
       return new service();
-    }).then(serve => {
+    }).then((serve) => {
       return serve.getPushProvider(queueName);
     }).then((pushSender) => {
       return pushSender.rpcCall({
         hi: 'true'
       });
-    }).catch(err => {
+    }).catch((err) => {
       assert.equal(err, 'timeout');
       isRejected = true;
     }).then(() => {
@@ -145,9 +187,9 @@ describe('messaging/endtoendtest', function () {
     });
   });
 
-
   it('should reject when worker returns rejected promise in rpc', () => {
-    let queueName = 'messagingtest5';
+    const queueName = 'messagingtest5';
+
     new service().then(function (serviceQueue) {
       serviceQueue.addWorker(queueName, () => {
         return Q.reject({
@@ -155,6 +197,7 @@ describe('messaging/endtoendtest', function () {
         });
       });
     });
+
     return new service().then((serve) => {
       return serve.getPushProvider(queueName);
     }).then((pushSender) => {
@@ -163,7 +206,7 @@ describe('messaging/endtoendtest', function () {
       });
     }).then(() => {
       throw 'Error1';
-    }).catch(err => {
+    }).catch((err) => {
       if (err === 'Error1') {
         throw 'not worked correctly';
       } else {
@@ -171,5 +214,4 @@ describe('messaging/endtoendtest', function () {
       }
     });
   });
-
 });
