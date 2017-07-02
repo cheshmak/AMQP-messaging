@@ -7,7 +7,8 @@
   "scripts": {
     "eslint:test": "node_modules/.bin/eslint -c .eslintrc.js ./lib/* ./test/*",
     "eslint:fix": "node_modules/.bin/eslint --fix -c .eslintrc.js ./lib/* ./test/*",
-    "precommit": "npm run test",
+    "precommit": "npm run eslint:test",
+    "prepush": "npm run test",
     "test": "npm run eslint:test && NODE_ENV='test' node_modules/nyc/bin/nyc.js node_modules/mocha/bin/mocha test/**/*.spec.js",
     "test-report": "npm run eslint:test && NODE_ENV='test' node_modules/nyc/bin/nyc.js report -r html node_modules/mocha/bin/mocha test/**/*.spec.js && xdg-open ./coverage/index.html >/dev/null 2>&1 & open ./coverage/index.html"
   },
