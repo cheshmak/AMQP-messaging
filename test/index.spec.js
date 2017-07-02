@@ -167,8 +167,8 @@ describe('messaging/endtoendtest', function () {
         };
 
       /* eslint
-      no-unused-vars: ["warn"]
-      no-undef: ["warn"]
+      no-unused-vars: ["off"]
+      no-undef: ["off"]
       */
       topic.subscribe(ex1, (res) => {
         setTimeout(() => {
@@ -224,9 +224,9 @@ describe('messaging/endtoendtest', function () {
 
     Q.fcall(() => {
 
-      }).then(() => {
-        return new service();
-      })
+    }).then(() => {
+      return new service();
+    })
       .then(function (serviceQueue) {
         serviceQ = serviceQueue;
 

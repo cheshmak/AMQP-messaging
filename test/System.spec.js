@@ -20,8 +20,8 @@ describe('System Class', function () {
   it('Should work correctly with invalid callbacks', function (done) {
     this.timeout(7000);
     /* eslint
-     no-unused-vars: ["warn"]
-     no-undef: ["warn"]
+     no-unused-vars: ["off"]
+     no-undef: ["off"]
      */
     const invalidFunc = () => {
       sample();
