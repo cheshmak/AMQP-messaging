@@ -4,7 +4,7 @@ const
   chai = require('chai'),
   expect = chai.expect,
   Q = require('q'),
-  system = require('../lib/System'),
+  system = require('../lib/system'),
   amqp = require('amqp-connection-manager');
 
 
