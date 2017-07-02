@@ -169,9 +169,6 @@ module.exports = {
     "no-extra-bind": [
       "error"
     ],
-    "no-invalid-this": [
-      "error"
-    ],
     "no-lone-blocks": [
       "error"
     ]

@@ -3,6 +3,7 @@
   "version": "1.2.0",
   "description": "RabbitMQ messaging",
   "main": "lib/index.js",
+  "license": "UNLICENSED",
   "scripts": {
     "eslint:test": "node_modules/.bin/eslint -c .eslintrc.js ./lib/* ./test/*",
     "eslint:fix": "node_modules/.bin/eslint --fix -c .eslintrc.js ./lib/* ./test/*",
@@ -16,13 +17,14 @@
     "async": "2.4.1",
     "bson": "1.0.4",
     "ches-exception": "git+ssh://git@bitbucket.cheshmak.me:7999/ches-lib/exception.git#v1.x",
+    "ches-logger": "git+ssh://git@bitbucket.cheshmak.me:7999/ches-lib/logger.git#v1.x",
     "husky": "0.14.2",
     "lodash": "4.16.6",
-    "q": "1.5.0",
-    "uuid": "3.1.0"
+    "q": "1.5.0"
   },
   "devDependencies": {
     "chai": "3.5.0",
+    "chai-as-promised": "7.0.0",
     "eslint": "4.1.1",
     "mocha": "3.3.0",
     "node-cmd": "3.0.0",
