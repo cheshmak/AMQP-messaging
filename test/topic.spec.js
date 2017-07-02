@@ -1,6 +1,6 @@
 'use strict';
 const
-  topic = require('../lib/Topic'),
+  topic = require('../lib/topic'),
   Q = require('q'),
   chai = require('chai'),
   expect = chai.expect,
