@@ -4,6 +4,7 @@ const
   Q = require('q'),
   chai = require('chai'),
   assert = chai.assert,
+  _ = require('lodash'),
   cmd = require('node-cmd');
 
 describe('messaging/endtoendtest', function () {
@@ -67,7 +68,8 @@ describe('messaging/endtoendtest', function () {
           myinfo: 'yeah',
           extra: {
             mydata: mybuffer
-          }
+          },
+          emptyObj: {}
         });
       });
     });
@@ -81,6 +83,8 @@ describe('messaging/endtoendtest', function () {
     }).then((result) => {
       assert.deepEqual(result.myinfo, 'yeah');
       assert.deepEqual(result.extra.mydata, mybuffer);
+      assert.isObject(result.emptyObj);
+      assert.isOk(_.size(result.emptyObj) === 0);
     });
   });
 
