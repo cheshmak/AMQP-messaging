@@ -14,6 +14,7 @@
     "async": "2.4.1",
     "ches-exception": "git+ssh://git@bitbucket.cheshmak.me:7999/ches-lib/exception.git#v1.x",
     "lodash": "4.16.6",
+    "bson": "1.0.4",
     "q": "1.5.0"
   },
   "devDependencies": {

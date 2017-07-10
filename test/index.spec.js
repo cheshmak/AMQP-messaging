@@ -2,6 +2,7 @@
 const service = require('../lib').service,
   Q = require('q'),
   assert = require('chai').assert,
+  _ = require('lodash'),
   cmd = require('node-cmd');
 
 describe('messaging/endtoendtest', function () {
@@ -46,11 +47,16 @@ describe('messaging/endtoendtest', function () {
   });
   it('should work find with rpc', () => {
     let queueName = 'messagingtest2';
+    let mybuffer = new Buffer.from('ohh yeah');
     new service().then(function (serviceQueue) {
       serviceQueue.addWorker(queueName, (data) => {
         assert.equal(data.hi, 'true');
         return Q.resolve({
-          myinfo: 'yeah'
+          myinfo: 'yeah',
+          extra: {
+            mydata: mybuffer
+          },
+          emptyObj: {}
         });
       });
     });
@@ -61,7 +67,10 @@ describe('messaging/endtoendtest', function () {
         hi: 'true'
       });
     }).then(result => {
-      assert.equal(result.myinfo, 'yeah');
+      assert.deepEqual(result.myinfo, 'yeah');
+      assert.deepEqual(result.extra.mydata, mybuffer);
+      assert.isObject(result.emptyObj);
+      assert.isOk(_.size(result.emptyObj) === 0);
     });
   });
 
