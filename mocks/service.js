@@ -7,7 +7,7 @@ var push = require('./push'),
  * @param dataToReturn : {routeName:{}}
  * @returns {service}
  */
-module.exports = dataToReturn => {
+module.exports = (dataToReturn) => {
   var service = function () {
     return Q.resolve(this);
   };
