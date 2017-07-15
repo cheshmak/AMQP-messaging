@@ -5,6 +5,7 @@ const Q = require('q');
 function Push(data) {
   this._data = data;
 }
+
 Push.prototype.sendPush = function () {
   return Q.resolve();
 };

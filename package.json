@@ -3,24 +3,33 @@
   "version": "1.2.0",
   "description": "RabbitMQ messaging",
   "main": "lib/index.js",
+  "license": "UNLICENSED",
   "scripts": {
-    "test": "NODE_ENV='test' node_modules/nyc/bin/nyc.js node_modules/mocha/bin/mocha test/**/*.spec.js",
-    "test-report": "NODE_ENV='test' node_modules/nyc/bin/nyc.js report -r html node_modules/mocha/bin/mocha test/**/*.spec.js && xdg-open ./coverage/index.html >/dev/null 2>&1 & open ./coverage/index.html"
+    "eslint:test": "node_modules/.bin/eslint -c .eslintrc.js ./lib/* ./test/*",
+    "eslint:fix": "node_modules/.bin/eslint --fix -c .eslintrc.js ./lib/* ./test/*",
+    "precommit": "npm run eslint:test",
+    "prepush": "npm run test",
+    "test": "npm run eslint:test && NODE_ENV='test' node_modules/nyc/bin/nyc.js node_modules/mocha/bin/mocha test/**/*.spec.js",
+    "test-report": "npm run eslint:test && NODE_ENV='test' node_modules/nyc/bin/nyc.js report -r html node_modules/mocha/bin/mocha test/**/*.spec.js && xdg-open ./coverage/index.html >/dev/null 2>&1 & open ./coverage/index.html"
   },
   "author": "Mehran Khajavi <khajavi@cheshmak.me>",
   "dependencies": {
     "amqp-connection-manager": "1.3.5",
     "amqplib": "0.4.0",
     "async": "2.4.1",
-    "ches-exception": "git+ssh://git@bitbucket.cheshmak.me:7999/ches-lib/exception.git#v1.x",
-    "lodash": "4.16.6",
     "bson": "1.0.4",
+    "ches-exception": "git+ssh://git@bitbucket.cheshmak.me:7999/ches-lib/exception.git#v1.x",
+    "ches-logger": "git+ssh://git@bitbucket.cheshmak.me:7999/ches-lib/logger.git#v1.x",
+    "husky": "0.14.2",
+    "lodash": "4.16.6",
     "q": "1.5.0"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "mocha": "^3.3.0",
-    "nyc": "^10.3.0",
-    "node-cmd": "3.0.0"
+    "chai": "3.5.0",
+    "chai-as-promised": "7.0.0",
+    "eslint": "4.1.1",
+    "mocha": "3.3.0",
+    "node-cmd": "3.0.0",
+    "nyc": "10.3.0"
   }
 }
