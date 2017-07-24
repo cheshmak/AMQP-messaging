@@ -1,6 +1,6 @@
 {
   "name": "ches-messaging",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "RabbitMQ messaging",
   "main": "lib/index.js",
   "license": "UNLICENSED",
@@ -18,8 +18,8 @@
     "amqplib": "0.4.0",
     "async": "2.4.1",
     "bson": "1.0.4",
-    "ches-exception": "git+ssh://git@bitbucket.cheshmak.me:7999/ches-lib/exception.git#v1.x",
-    "ches-logger": "git+ssh://git@bitbucket.cheshmak.me:7999/ches-lib/logger.git#v1.x",
+    "ches-exception": "git+ssh://git@bitbucket.org:Cheshmak/exception.git#v1.x",
+    "ches-logger": "git+ssh://git@bitbucket.org:Cheshmak/logger.git#v1.x",
     "husky": "0.14.2",
     "lodash": "4.16.6",
     "q": "1.5.0"
