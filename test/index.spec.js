@@ -85,6 +85,9 @@ describe('messaging/endtoendtest', function () {
       assert.deepEqual(result.extra.mydata, mybuffer);
       assert.isObject(result.emptyObj);
       assert.isOk(_.size(result.emptyObj) === 0);
+      return new service().then((sq) => {
+        return sq.cancelWorker(queueName);
+      });
     });
   });
 
