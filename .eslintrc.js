@@ -16,10 +16,6 @@ module.exports = {
     "no-unused-vars": [
       "error"
     ],
-    "array-element-newline": [
-      "error",
-      "never"
-    ],
     "linebreak-style": [
       "error",
       "unix"
@@ -123,12 +119,6 @@ module.exports = {
     "padded-blocks": [
       "error",
       "never"
-    ],
-    "padding-line-between-statements": [
-      "error",
-      { blankLine: "never", prev: "if", next: "*" },
-      { blankLine: "always", prev: ["const", "let", "var"], next: ["class", "function"]},
-      { blankLine: "always", prev: ["function"], next: '*'}
     ],
     "comma-style": [
       "error",
