@@ -1,6 +1,6 @@
 {
   "name": "ches-messaging",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "RabbitMQ messaging",
   "main": "lib/index.js",
   "license": "UNLICENSED",
