@@ -16,16 +16,13 @@
   "dependencies": {
     "amqp-connection-manager": "1.3.5",
     "amqplib": "0.5.1",
-    "async": "2.4.1",
     "bson": "1.0.4",
-    "ches-exception": "git+ssh://git@bitbucket.org:Cheshmak/exception.git#v1.x",
-    "ches-logger": "git+ssh://git@bitbucket.org:Cheshmak/logger.git#v1.x",
-    "husky": "0.14.2",
+    "ches-logger": "git+ssh://git@bitbucket.org:Cheshmak/logger.git#v1.x",    
     "lodash": "4.16.6",
-    "q": "1.5.0",
     "uuid": "3.1.0"
   },
   "devDependencies": {
+    "q": "1.5.0",
     "chai": "3.5.0",
     "chai-as-promised": "7.0.0",
     "eslint": "4.1.1",

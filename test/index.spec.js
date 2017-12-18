@@ -91,6 +91,28 @@ describe('messaging/endtoendtest', function () {
     });
   });
 
+  it('should work with invalid message', async () => {
+    const queueName = 'messagingtest1';
+    const sleep = (t) => {
+      return new Promise((resolve) => {
+        setTimeout(resolve, t);
+      });
+    };
+
+    const serviceWrraper = await new service();
+    let workerData = null;
+    serviceWrraper.addWorker(queueName, async (data) => {
+      workerData = data;
+      return true;
+    });
+    await service.getChannelWrapper();
+    const channel = service.getChannel();
+    await channel.assertQueue(queueName);
+    await channel.sendToQueue(queueName, Buffer('invalid data'));
+    await sleep(200);
+    assert.isNull(workerData);
+  });
+
   it('should stop messages when calling cancel', () => {
     const deferred = Q.defer(),
       queueName = 'messagingtest3';
