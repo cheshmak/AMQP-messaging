@@ -99,9 +99,9 @@ describe('messaging/endtoendtest', function () {
       });
     };
 
-    const serviceWrraper = await new service();
+    const serviceWrapper = await new service();
     let workerData = null;
-    serviceWrraper.addWorker(queueName, async (data) => {
+    serviceWrapper.addWorker(queueName, async (data) => {
       workerData = data;
       return true;
     });
