@@ -2,6 +2,7 @@
 const
   service = require('../lib').service,
   Q = require('q'),
+  channelManager = require('../lib/channelManager'),
   chai = require('chai'),
   assert = chai.assert,
   _ = require('lodash'),
@@ -101,12 +102,10 @@ describe('messaging/endtoendtest', function () {
 
     const serviceWrapper = await new service();
     let workerData = null;
-    serviceWrapper.addWorker(queueName, async (data) => {
+    serviceWrapper.addWorker(queueName, (data) => {
       workerData = data;
-      return true;
     });
-    await service.getChannelWrapper();
-    const channel = service.getChannel();
+    const channel = await channelManager.getChannel();
     await channel.assertQueue(queueName);
     await channel.sendToQueue(queueName, Buffer('invalid data'));
     await sleep(200);
