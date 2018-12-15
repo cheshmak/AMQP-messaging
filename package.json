@@ -1,6 +1,6 @@
 {
   "name": "ches-messaging",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "RabbitMQ messaging",
   "main": "lib/index.js",
   "license": "UNLICENSED",
@@ -14,9 +14,9 @@
   },
   "author": "Mehran Khajavi <khajavi@cheshmak.me>",
   "dependencies": {
-    "amqplib": "0.5.2",
+    "amqplib": "0.5.3",
     "bson": "1.0.4",
-    "ches-logger": "git+ssh://git@bitbucket.org:Cheshmak/logger.git#v1.x",
+    "ches-logger": "git+ssh://git@bitbucket.org/Cheshmak/logger.git#v1.x",
     "lodash": "4.16.6",
     "uuid": "3.1.0"
   },
