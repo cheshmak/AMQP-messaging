@@ -139,9 +139,6 @@ module.exports = {
         "classes": true
       }
     ],
-    "no-sync": [
-      "error"
-    ],
     "no-new-require": [
       "error"
     ],
