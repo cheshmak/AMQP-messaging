@@ -1,9 +1,9 @@
 'use strict';
-const topic = require('../lib').topic;
-const Q = require('q');
-const chai = require('chai');
-const expect = chai.expect;
-const cmd = require('node-cmd');
+const topic = require('../lib').topic,
+  Q = require('q'),
+  chai = require('chai'),
+  expect = chai.expect,
+  cmd = require('node-cmd');
 
 chai.use(require('chai-as-promised'));
 
