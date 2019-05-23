@@ -120,9 +120,7 @@ describe('messaging/endtoendtest', function () {
       hiProcessed = Q.defer(),
       cancelProcessed = false;
 
-    Q.fcall(() => {
-
-    }).then(() => {
+    Q.fcall(() => {}).then(() => {
       return new service();
     })
       .then(function (serviceQueue) {
