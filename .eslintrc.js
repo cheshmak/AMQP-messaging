@@ -42,7 +42,9 @@ module.exports = {
     ],
     "no-console": [
       "error",
-      { "allow": ["log", "warn", "error"] }
+      {
+        "allow": ["log", "warn", "error"]
+      }
     ],
     "no-multi-spaces": [
       "error"
@@ -56,7 +58,10 @@ module.exports = {
     ],
     "space-before-function-paren": [
       "error",
-      {"anonymous": "always", "named": "never"}
+      {
+        "anonymous": "always",
+        "named": "never"
+      }
     ],
     "space-in-parens": [
       "error"
@@ -138,9 +143,6 @@ module.exports = {
         "functions": true,
         "classes": true
       }
-    ],
-    "no-sync": [
-      "error"
     ],
     "no-new-require": [
       "error"

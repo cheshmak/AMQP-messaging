@@ -15,9 +15,9 @@
   "author": "Mehran Khajavi <khajavi@cheshmak.me>",
   "dependencies": {
     "amqplib": "0.5.3",
-    "bson": "1.0.4",
     "ches-logger": "git+ssh://git@bitbucket.org/Cheshmak/logger.git#v1.x",
     "lodash": "4.16.6",
+    "notepack.io": "2.3.0",
     "uuid": "3.1.0"
   },
   "devDependencies": {
