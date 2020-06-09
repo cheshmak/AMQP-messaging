@@ -35,7 +35,7 @@ describe('messaging/endtoendtest', function () {
       serviceQueue.addWorker(queueName, (data) => {
         assert.equal(data.hi, 'true');
         deferred.resolve();
-        serviceQueue.cancelWorker(queueName) // prevent this for handling next
+        serviceQueue.cancelWorker() // prevent this for handling next
           .then(() => {
             deferred.resolve();
           });
@@ -87,7 +87,7 @@ describe('messaging/endtoendtest', function () {
       assert.isObject(result.emptyObj);
       assert.isOk(_.size(result.emptyObj) === 0);
       return new service().then((sq) => {
-        return sq.cancelWorker(queueName);
+        return sq.cancelWorker();
       });
     });
   });
@@ -150,7 +150,7 @@ describe('messaging/endtoendtest', function () {
       }).then(() => {
         return hiProcessed.promise;
       }).then(() => {
-        return serviceQ.cancelWorker(queueName);
+        return serviceQ.cancelWorker();
       }).then(() => {
         setTimeout(() => {
           sender.sendPush({
