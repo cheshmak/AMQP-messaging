@@ -9,7 +9,7 @@
     "eslint:fix": "node_modules/.bin/eslint --fix -c .eslintrc.js ./lib/* ./test/*",
     "precommit": "npm run eslint:test",
     "prepush": "npm run test",
-    "test": "npm run eslint:test && NODE_ENV='test' node_modules/nyc/bin/nyc.js node_modules/mocha/bin/mocha test/**/*.spec.js",
+    "test": "npm run eslint:test && NODE_ENV='test' node_modules/nyc/bin/nyc.js node_modules/mocha/bin/mocha test/**/packQueue.spec.js",
     "test-report": "npm run eslint:test && NODE_ENV='test' node_modules/nyc/bin/nyc.js report -r html node_modules/mocha/bin/mocha test/**/*.spec.js && xdg-open ./coverage/index.html >/dev/null 2>&1 & open ./coverage/index.html"
   },
   "author": "Mehran Khajavi <khajavi@cheshmak.me>",
@@ -27,6 +27,8 @@
     "eslint": "4.1.1",
     "mocha": "3.3.0",
     "node-cmd": "3.0.0",
-    "nyc": "10.3.0"
+    "nyc": "10.3.0",
+    "sinon": "7.5.0",
+    "sinon-chai": "3.3.0"
   }
 }
