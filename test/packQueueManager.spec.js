@@ -32,7 +32,7 @@ describe('packQueue class', () => {
     // Call target function
     await mainModule.sendPush('testQueue2', {
       fakeData: true
-    }, false);
+    });
     // Expectations check
     mockAddItemToQueue.should.be.calledOnce;
     // Restore everything
