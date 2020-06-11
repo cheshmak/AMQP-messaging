@@ -27,15 +27,15 @@ describe('packQueue class', () => {
 
   it('Should add item when call sendPush', async () => {
     // Mock section
-    const mockAddItemInQueue = sinon.spy(packQManager, 'addItemInQueue');
+    const mockAddItemToQueue = sinon.spy(packQManager, 'addItemToQueue');
     await mainModule.addWorker('testQueue2', () => {});
     // Call target function
     await mainModule.sendPush('testQueue2', {
       fakeData: true
     }, false);
     // Expectations check
-    mockAddItemInQueue.should.be.calledOnce;
+    mockAddItemToQueue.should.be.calledOnce;
     // Restore everything
-    mockAddItemInQueue.restore();
+    mockAddItemToQueue.restore();
   });
 });
