@@ -2,14 +2,12 @@
 const
   service = require('../lib').service,
   channelManager = require('../lib/channelManager'),
-  packQManager = require('../lib/packQueueManager'),
   Q = require('q'),
   chai = require('chai'),
   assert = chai.assert,
   _ = require('lodash'),
   cmd = require('node-cmd'),
-  Messaging = require('../lib'),
-  sinon = require('sinon');
+  Messaging = require('../lib');
 
 chai.use(require('sinon-chai'));
 chai.should();
@@ -224,7 +222,7 @@ describe('Messaging - Service (Backward compatibility)', function () {
   });
 });
 
-describe.only('class Messaging', function () {
+describe('class Messaging', function () {
   describe('async function addWorker ->', function () {
     let messaging;
     before(() => {
@@ -251,19 +249,6 @@ describe.only('class Messaging', function () {
       // Check Expectations
       const result = await channel.checkQueue(queueName);
       assert.equal(1, result.consumerCount);
-    });
-
-    it('Should call packQManager.assertPackQueue', async () => {
-      // Mock
-      const spyOnAssertPackQueue = sinon.spy(packQManager, 'assertPackQueue');
-      // Prepare
-      const queueName = 'myQueueName2';
-      // Call target function
-      await messaging.addWorker(queueName, () => {});
-      // Check Expectations
-      spyOnAssertPackQueue.should.be.calledOnce;
-      // Restore everything
-      spyOnAssertPackQueue.restore();
     });
   });
 });
