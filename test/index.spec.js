@@ -1,14 +1,20 @@
 'use strict';
 const
   service = require('../lib').service,
-  Q = require('q'),
   channelManager = require('../lib/channelManager'),
+  packQManager = require('../lib/packQueueManager'),
+  Q = require('q'),
   chai = require('chai'),
   assert = chai.assert,
   _ = require('lodash'),
-  cmd = require('node-cmd');
+  cmd = require('node-cmd'),
+  Messaging = require('../lib'),
+  sinon = require('sinon');
 
-describe('messaging/endtoendtest', function () {
+chai.use(require('sinon-chai'));
+chai.should();
+
+describe('Messaging - Service (Backward compatibility)', function () {
   const deleteTestsLists = () => {
     cmd.run('rabbitmqadmin delete queue name=messagingtest1');
     cmd.run('rabbitmqadmin delete queue name=messagingtest2');
@@ -214,6 +220,50 @@ describe('messaging/endtoendtest', function () {
       } else {
         assert.equal(err.myerr, 'ohh');
       }
+    });
+  });
+});
+
+describe.only('class Messaging', function () {
+  describe('async function addWorker ->', function () {
+    let messaging;
+    before(() => {
+      messaging = new Messaging();
+    });
+
+    it('Should assert a queue in rabbitmq', async () => {
+      // Prepare
+      const channel = await channelManager.getChannel();
+      const queueName = 'myQueueName';
+      // Call target function
+      await messaging.addWorker(queueName, () => {});
+      // Check Expectations
+      const result = await channel.checkQueue(queueName);
+      assert.equal(queueName, result.queue);
+    });
+
+    it('Should define a consumer after queue assertion', async () => {
+      // Prepare
+      const channel = await channelManager.getChannel();
+      const queueName = 'myQueueName1';
+      // Call target function
+      await messaging.addWorker(queueName, () => {});
+      // Check Expectations
+      const result = await channel.checkQueue(queueName);
+      assert.equal(1, result.consumerCount);
+    });
+
+    it('Should call packQManager.assertPackQueue', async () => {
+      // Mock
+      const spyOnAssertPackQueue = sinon.spy(packQManager, 'assertPackQueue');
+      // Prepare
+      const queueName = 'myQueueName2';
+      // Call target function
+      await messaging.addWorker(queueName, () => {});
+      // Check Expectations
+      spyOnAssertPackQueue.should.be.calledOnce;
+      // Restore everything
+      spyOnAssertPackQueue.restore();
     });
   });
 });
