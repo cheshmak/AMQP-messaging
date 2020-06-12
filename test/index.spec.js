@@ -2,8 +2,10 @@
 const
   service = require('../lib').service,
   channelManager = require('../lib/channelManager'),
+  packQManager = require('../lib/packQueueManager'),
   Q = require('q'),
   chai = require('chai'),
+  sinon = require('sinon'),
   assert = chai.assert,
   _ = require('lodash'),
   cmd = require('node-cmd'),
@@ -223,16 +225,16 @@ describe('Messaging - Service (Backward compatibility)', function () {
 });
 
 describe('class Messaging', function () {
-  describe('async function addWorker ->', function () {
-    let messaging;
-    before(() => {
-      messaging = new Messaging();
-    });
+  let messaging;
+  before(() => {
+    messaging = new Messaging();
+  });
 
+  describe('async function addWorker ->', () => {
     it('Should assert a queue in rabbitmq', async () => {
       // Prepare
       const channel = await channelManager.getChannel();
-      const queueName = 'myQueueName';
+      const queueName = 'myFirstTestQueue';
       // Call target function
       await messaging.addWorker(queueName, () => {});
       // Check Expectations
@@ -243,12 +245,39 @@ describe('class Messaging', function () {
     it('Should define a consumer after queue assertion', async () => {
       // Prepare
       const channel = await channelManager.getChannel();
-      const queueName = 'myQueueName1';
+      const queueName = 'mySecondTestQueue';
       // Call target function
       await messaging.addWorker(queueName, () => {});
       // Check Expectations
       const result = await channel.checkQueue(queueName);
       assert.equal(1, result.consumerCount);
+    });
+  });
+
+  describe('async function cancelWorkers ->', () => {
+    it('Should remove all consumers in rabbitmq', async () => {
+      // Prepare
+      const channel = await channelManager.getChannel();
+      const queueName = 'myThirdTestQueue';
+      await messaging.addWorker(queueName, () => {});
+      // Call target function
+      await messaging.cancelWorkers();
+      // Check Expectations
+      const consumers = _.keys(channel.consumers);
+      assert.equal(0, consumers.length);
+    });
+
+    it('Should call packQManager.clearAllQueues()', async () => {
+      // Prepare
+      const spyOnPackQueueManager = sinon.spy(packQManager, 'clearAllQueues');
+      const queueName = 'myThirdTestQueue';
+      await messaging.addWorker(queueName, () => {});
+      // Call target function
+      await messaging.cancelWorkers();
+      // Check Expectations
+      spyOnPackQueueManager.should.be.calledOnce;
+      // Restore everything
+      spyOnPackQueueManager.restore();
     });
   });
 });
