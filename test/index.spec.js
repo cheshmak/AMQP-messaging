@@ -42,10 +42,6 @@ describe('class Messaging', function () {
       });
       await messaging.sendPush(queueName, {
         hi: 'true'
-      }, {
-        pack: {
-          enable: false
-        }
       });
     });
   });
@@ -54,29 +50,23 @@ describe('class Messaging', function () {
 
   // Packing:
   it('should packing work perfectly', async () => {
-    let callCount = 0;
-    const workerFunc = function () {
-      callCount++;
-    };
-    await messaging.addWorker(queueName, workerFunc);
+    const addItemToQueue = sinon.stub(packQManager,'addItemToQueue').returns(Promise.resolve());
     await messaging.sendPush(queueName, {
       hi: 'true'
     }, {
       pack: {
-        enable: true,
-        queueSize: 2
+        size: 2
       }
     });
     await messaging.sendPush(queueName, {
       hi: 'true'
     }, {
       pack: {
-        enable: true,
-        queueSize: 2
+        size: 2
       }
     });
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    callCount.should.to.equal(2);
+    addItemToQueue.should.to.be.calledTwice;
+    addItemToQueue.restore();
   });
 
   it('should call workerFunction one by one and not fail if the first one failed', async () => {
@@ -92,16 +82,14 @@ describe('class Messaging', function () {
       hi: 'true'
     }, {
       pack: {
-        enable: true,
-        queueSize: 2
+        size: 2
       }
     });
     await messaging.sendPush(queueName, {
       hi: 'true'
     }, {
       pack: {
-        enable: true,
-        queueSize: 2
+        size: 2
       }
     });
     await new Promise((resolve) => setTimeout(resolve, 100));
@@ -131,7 +119,16 @@ describe('class Messaging', function () {
     result.emptyObj.should.to.be.an('object');
     _.size(result.emptyObj).should.to.equal(0);
   });
-
+  it('should work with invalid message', async () => {
+    let workerData = null;
+    await messaging.addWorker(queueName, async (data) => {
+      workerData = data;
+    });
+    const channel = await channelManager.getChannel();
+    await channel.sendToQueue(queueName, Buffer.from('invalid data'));
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    (workerData === null).should.to.be.true;
+  });
   it('should stop messages when calling cancel', async function () {
     this.timeout(10000);
     let canceledReceived = false;
@@ -143,10 +140,6 @@ describe('class Messaging', function () {
     await new Promise((resolve1) => setTimeout(resolve1, 1000));
     await messaging.sendPush(queueName, {
       hi: 'true'
-    }, {
-      pack: {
-        enable: false
-      }
     });
     await new Promise((resolve1) => setTimeout(resolve1, 300));
     await messaging.cancelWorkers();
@@ -155,7 +148,7 @@ describe('class Messaging', function () {
       canceled: 'ok'
     }, {
       pack: {
-        enable: false
+        size: 2
       }
     });
     await new Promise((resolve1) => setTimeout(resolve1, 500));
@@ -164,16 +157,7 @@ describe('class Messaging', function () {
     }
   });
 
-  it('should work with invalid message', async () => {
-    let workerData = null;
-    await messaging.addWorker(queueName, async (data) => {
-      workerData = data;
-    });
-    const channel = await channelManager.getChannel();
-    await channel.sendToQueue(queueName, Buffer.from('invalid data'));
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    (workerData === null).should.to.be.true;
-  });
+
   it('should reject with timeout when timeout reached in rpc', async () => {
     await messaging.addWorker(queueName, () => {
       return new Promise(() => {}); // it never resolves
