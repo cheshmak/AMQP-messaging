@@ -1,6 +1,6 @@
 {
   "name": "amqp-messaging",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "connection manager and messaging packing and serialization for microservices using rabbitmq",
   "main": "lib/index.js",
   "directories": {
